@@ -24,17 +24,17 @@ public class CameraClickScript : MonoBehaviour
                         if (index == ControlDevicePanelManager.PC)
                         {
                             //在这里微调碰撞到的位置
-                            hitPoint.y += 1;
+                            hitPoint.y += 1.5f;
                             prefab = (GameObject)Resources.Load("Prefabs/DevicePC");
                         }
                         else if (index == ControlDevicePanelManager.ROUTER)
                         {
-                            hitPoint.y += 0.2f;
+                            hitPoint.y += 0.6f;
                             prefab = (GameObject)Resources.Load("Prefabs/DeviceRouter");
                         }
                         else if (index == ControlDevicePanelManager.SWITCH)
                         {
-                            hitPoint.y += 0.2f;
+                            hitPoint.y += 0.6f;
                             prefab = (GameObject)Resources.Load("Prefabs/DeviceSwitch");
                         }
                         else
@@ -58,17 +58,6 @@ public class CameraClickScript : MonoBehaviour
                         }
                         ControlDevicePanelManager.Select(0, null);
                     }
-                    /*
-                    else if (index == ControlDevicePanelManager.LINK)
-                    {
-                        GameObject prefab = (GameObject)Resources.Load("Prefabs/LinkUnit");
-                        hitPoint.y += 0.1f;
-                        DeviceManager.GroundClickPoint = hitPoint;
-                        GameObject newObject = Instantiate(prefab, DeviceManager.GroundClickPoint, Quaternion.Euler(0, 0, 0)) as GameObject;
-                        newObject.transform.localScale += new Vector3(0, 1, 0);
-                        ControlDevicePanelManager.Select(0, null);
-                    }
-                    */
                 }
             }
         }

@@ -16,32 +16,17 @@ public class DeviceManager
     /// <summary>
     /// 连线的额外距离
     /// </summary>
-    private readonly static float constantLinkSpan = 1;
-
+    private readonly static float constantLinkSpan = 1.8f;
     /// <summary>
     /// 设备记录表
-    /// 使用每一个对象Gameobject对应的hashcode作为key
+    /// 使用一个设备Gameobject 的 hashcode 作为 key
     /// </summary>
     public static Dictionary<int, DeviceInfo> deviceTable = new Dictionary<int, DeviceInfo>();
     /// <summary>
-    /// 设备链接表
-    /// 存储链接关系 双向存储。若“结点2”与“结点3”链接，那么
-    /// deviceLinkTable[2].Contains(3) == true
-    /// deviceLinkTable[3].Contains(2) == true
-    /// key：节点A设备的hashcode
-    /// value：与节点A相连的结点的hashcode的<list>
+    /// 连续记录表
+    /// 使用一个连线Gameobject 的 hashcode 作为 key
     /// </summary>
-    public static Dictionary<int, List<int>> deviceLinkTable = new Dictionary<int, List<int>>();
-    /// <summary>
-    /// 连线对象记录表 存储连线对象本身
-    /// 这里我们商定链接表的结构是单向存储。即，如果是有“结点2”与“结点3”链接，那么我们会为它们进行连线，连线的结果在链接表中是单向的，
-    /// 即有可能是linkTable[2][3] 也有可能是 linkTable[3][2]。
-    /// 链接表：之所以这里要存储一个链接表的原因是因为，我们在删除设备的时候，需要删除该设备周围的连线实例
-    /// key：节点A设备的hashcode
-    /// key2：节点B设备的hashcode
-    /// value：连线对应的Gameobject
-    /// </summary>
-    public static Dictionary<int, Dictionary<int, GameObject>> linkTable = new Dictionary<int, Dictionary<int, GameObject>>();
+    public static Dictionary<int, LineInfo> lineTable = new Dictionary<int, LineInfo>();
     /// <summary>
     /// 创建设备的同时，将设备的信息注册到设备管理器中
     /// </summary>
@@ -50,7 +35,6 @@ public class DeviceManager
     public static void CreateDevice(int hashcode, DeviceInfo deviceInfo)
     {
         deviceTable.Add(hashcode, deviceInfo);
-        Debug.Log(deviceInfo);
     }
     /// <summary>
     /// 删除设备的同时，将设备的信息从设备管理器中删除
@@ -58,39 +42,10 @@ public class DeviceManager
     /// </summary>
     /// <param name="hashcode">被删除的设备GameObject的hashcode</param>
     /// <param name="gameObject">被删除的设备gameobject</param>
-    public static void DeleteDevice(int hashcode, GameObject gameObject)
+    public static bool DeleteDevice(int hashcode, GameObject gameObject)
     {
         //设备表信息的删除
-        deviceTable.Remove(hashcode);
-        GameObject.Destroy(gameObject);
-        if (deviceLinkTable.ContainsKey(hashcode))
-        {
-            //获取到自己周围结点的列表
-            List<int> list = deviceLinkTable[hashcode];
-            foreach (int neiborHashcode in list)
-            {
-                //针对双向存储的链表进行交叉删除
-                if (linkTable.ContainsKey(hashcode) && linkTable[hashcode].ContainsKey(neiborHashcode))
-                {
-                    GameObject.Destroy(linkTable[hashcode][neiborHashcode]);
-                    linkTable[hashcode].Remove(neiborHashcode);
-                }
-                else if (linkTable.ContainsKey(neiborHashcode) && linkTable[neiborHashcode].ContainsKey(hashcode))
-                {
-                    GameObject.Destroy(linkTable[neiborHashcode][hashcode]);
-                    linkTable[neiborHashcode].Remove(hashcode);
-                }
-            }
-
-            //删除自己作为结点列表
-            deviceLinkTable.Remove(hashcode);
-            //如果包含了该结点，我们会尝试删除该结点
-            foreach (KeyValuePair<int, List<int>> kvp in deviceLinkTable)
-            {
-                //删除自己作为邻接结点列表中的内容
-                kvp.Value.Remove(hashcode);
-            }
-        }
+        return deviceTable.Remove(hashcode);
     }
     /// <summary>
     /// 取得设备的信息
@@ -109,56 +64,58 @@ public class DeviceManager
         }
     }
     /// <summary>
-    /// 创建连线
+    /// 检查两个设备端口是否足够来建立一条新连线
     /// </summary>
-    public static void CreateLink(int hashcodeA, int hashcodeB, GameObject linkObject)
+    /// <param name="hashcodeA"></param>
+    /// <param name="hashcodeB"></param>
+    /// <returns></returns>
+    public static bool ArePortsEnough(int hashcodeA,int hashcodeB)
     {
-        //连线对象记录表的维护
-        if (!linkTable.ContainsKey(hashcodeA))
-        {
-            linkTable.Add(hashcodeA, new Dictionary<int, GameObject>());
-        }
-        linkTable[hashcodeA].Add(hashcodeB, linkObject);
-        //设备链接表的维护
-        if (!deviceLinkTable.ContainsKey(hashcodeA))
-        {
-            deviceLinkTable.Add(hashcodeA, new List<int>());
-        }
-        deviceLinkTable[hashcodeA].Add(hashcodeB);
-        if (!deviceLinkTable.ContainsKey(hashcodeB))
-        {
-            deviceLinkTable.Add(hashcodeB, new List<int>());
-        }
-        deviceLinkTable[hashcodeB].Add(hashcodeA);
+        DeviceInfo infoA = deviceTable[hashcodeA];
+        DeviceInfo infoB = deviceTable[hashcodeB];
+        return infoA.IsPortsEnough() && infoB.IsPortsEnough();
     }
     /// <summary>
-    /// 删除链接
+    /// 创建两台设备之间的连线.
+    /// 我们需要在连线表将外部传入的“对象的hash值”与我们设备管理器新创建的“连线信息”进行绑定
     /// </summary>
-    /// <param name="hashcodeA">结点A的hash值</param>
-    /// <param name="hashcodeB">结点B的hash值</param>
-    public static void DeleteLink(int hashcodeA, int hashcodeB)
+    /// <param name="hashcodeA">设备a 的hash值</param>
+    /// <param name="hashcodeB">设备b 的hash值</param>
+    /// <param name="linkObject">生成的连线对象</param>
+    /// <returns>创建的成功或者失败</returns>
+    public static bool CreateLink(int hashcodeA, int hashcodeB, GameObject linkObject)
     {
-        //对设备链接表的内容进行修改
-        if (deviceLinkTable.ContainsKey(hashcodeA))
+        DeviceInfo ainfo = deviceTable[hashcodeA];
+        DeviceInfo binfo = deviceTable[hashcodeB];
+        if(ainfo.IsLinkable(linkObject) && binfo.IsLinkable(linkObject))
         {
-            deviceLinkTable[hashcodeA].Remove(hashcodeB);
+            LineInfo lineInfo = new LineInfo(ainfo, binfo);
+            ainfo.Link(linkObject);
+            binfo.Link(linkObject);
+            return true;
         }
-        if (deviceLinkTable.ContainsKey(hashcodeB))
+        else
         {
-            deviceLinkTable[hashcodeB].Remove(hashcodeA);
+            return false;
         }
-        //对链接对象记录表进行修改
-        if (linkTable.ContainsKey(hashcodeA) && linkTable[hashcodeA].ContainsKey(hashcodeB))
+    }
+    /// <summary>
+    /// 外部传入这个连线对象
+    /// </summary>
+    public static bool DeleteLink(GameObject linkObject)
+    {
+        LineInfo lineInfo = lineTable[linkObject.GetHashCode()];
+        DeviceInfo ainfo = lineInfo.GetAInfo();
+        DeviceInfo binfo = lineInfo.GetBInfo();
+        if(ainfo.UnLink(linkObject) && binfo.UnLink(linkObject))
         {
-            //消除掉连线对象本身
-            GameObject.Destroy(linkTable[hashcodeA][hashcodeB]);
-            linkTable[hashcodeA].Remove(hashcodeB);
+            Debug.Log("删除连线成功");
+            return true;
         }
-        else if (linkTable.ContainsKey(hashcodeB) && linkTable[hashcodeB].ContainsKey(hashcodeA))
+        else
         {
-            //消除掉连线对象本身
-            GameObject.Destroy(linkTable[hashcodeB][hashcodeA]);
-            linkTable[hashcodeB].Remove(hashcodeA);
+            Debug.Log("删除连线失败");
+            return false;
         }
     }
     /// <summary>
