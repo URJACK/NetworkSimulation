@@ -15,7 +15,9 @@ public class DeviceInfo
     /// 设备所处的层级
     /// </summary>
     private int layer;
-
+    /// <summary>
+    /// 当前记录的端口长度
+    /// </summary>
     private int portLength = 0;
     /// <summary>
     /// 当前类型设备的最大端口数量
@@ -24,7 +26,11 @@ public class DeviceInfo
     /// <summary>
     /// 用来记录相邻连线的GameObject实体
     /// </summary>
-    private GameObject[] ports = new GameObject[5];
+    private GameObject[] ports = new GameObject[LENGTH_MAXPORTS];
+    /// <summary>
+    /// 生成对应的设备代码区
+    /// </summary>
+    private string[] portCodes = new string[LENGTH_MAXPORTS];
 
     public string Name { get => name; set => name = value; }
     public int Layer { get => layer; set => layer = value; }
@@ -73,7 +79,7 @@ public class DeviceInfo
     /// <returns>是否可以加入该连线到该结点</returns>
     public bool IsLinkable(GameObject line)
     {
-        for(int i = 0; i < LENGTH_MAXPORTS; ++i)
+        for(int i = 0; i < maxPortLength; ++i)
         {
             if(ports[i] == null)
             {
@@ -116,7 +122,43 @@ public class DeviceInfo
         }
         return false;
     }
-
+    /// <summary>
+    /// 设置代码
+    /// </summary>
+    /// <param name="code">在这里存储代码</param>
+    /// <returns>必须在确保端口的情况下，设置代码才会有效</returns>
+    public bool SetCode(int index, string code)
+    {
+        if (ports[index] != null)
+        {
+            portCodes[index] = code;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    /// <summary>
+    /// 取得代码
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns>如果index对应端口未连接，返回null</returns>
+    public string GetCode(int index)
+    {
+        if (ports[index] != null)
+        {
+            return portCodes[index];
+        }
+        else
+        {
+            return "";
+        }
+    }
+    /// <summary>
+    /// 取得层级代表的字符串
+    /// </summary>
+    /// <returns></returns>
     public string GetLayerString()
     {
         if (layer == LAYER_SWITCH)
@@ -136,9 +178,12 @@ public class DeviceInfo
             return "不存在的层级";
         }
     }
+    /// <summary>
+    /// 取得端口显示字符串
+    /// </summary>
+    /// <returns></returns>
     public string GetPortsString()
     {
-        int index = 0;
         string str = "";
         for(int i = 0; i < LENGTH_MAXPORTS; ++i)
         {
@@ -161,7 +206,6 @@ public class DeviceInfo
     {
         return name + ":" + layer;
     }
-
     public static int LAYER_SWITCH = ControlDevicePanelManager.SWITCH;
     public static int LAYER_ROUTER = ControlDevicePanelManager.ROUTER;
     public static int LAYER_PC = ControlDevicePanelManager.PC;

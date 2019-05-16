@@ -13,7 +13,7 @@ public class DeviceInfomationPopAction : Action
     {
         Debug.Log(".....弹框 Boom!");
         PanelStack panelStack = PanelStack.GetInstance();
-        panelStack.SetInfoOfDeviceInfoPanel(DeviceManager.GetDeviceInfo(actionsession.GetColorDevice().GetHashCode()));
+        panelStack.InitInfoOfDeviceInfoPanel(DeviceManager.GetDeviceInfo(actionsession.GetColorDevice().GetHashCode()));
         panelStack.Push(panelStack.GetDeviceInfoPanel());
     }
 }

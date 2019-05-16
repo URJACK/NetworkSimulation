@@ -34,12 +34,10 @@ public class PanelStack : MonoBehaviour
     public Text deviceInfoPortTextArea;
     private DeviceInfo deviceInfo;
 
-    public GameObject CompileInfoPanel;
-    public GameObject CompilePortButton0;
-    public GameObject CompilePortButton1;
-    public GameObject CompilePortButton2;
-    public GameObject CompilePortButton3;
-    public GameObject CompilePortButton4;
+    public GameObject compileInfoPanel;
+    public GameObject compileInfoInputField;
+    public Text compileInfoPorTextArea;
+    private int compileInfoShowPortIndex = 0;
 
     /// <summary>
     /// 存储的界面栈内容
@@ -60,13 +58,13 @@ public class PanelStack : MonoBehaviour
     /// <returns></returns>
     public GameObject GetCompileInfoPanel()
     {
-        return CompileInfoPanel;
+        return compileInfoPanel;
     }
     /// <summary>
     /// 设备信息界面的内容设置
     /// </summary>
     /// <param name="info">被设置的内容信息</param>
-    public void SetInfoOfDeviceInfoPanel(DeviceInfo info)
+    public void InitInfoOfDeviceInfoPanel(DeviceInfo info)
     {
         deviceInfo = info;
         if (deviceInfo != null)
@@ -74,6 +72,19 @@ public class PanelStack : MonoBehaviour
             deviceInfoNameTextField.GetComponent<InputField>().text = deviceInfo.Name;
             deviceInfoTypeTextArea.text = deviceInfo.GetLayerString();
             deviceInfoPortTextArea.text = deviceInfo.GetPortsString();
+            SetInfoOfCompileInfoPanelByDeviceInfo(compileInfoShowPortIndex);
+        }
+    }
+    /// <summary>
+    /// 初始化编译界面的内容设置
+    /// </summary>
+    /// <param name="index"></param>
+    public void SetInfoOfCompileInfoPanelByDeviceInfo(int index)
+    {
+        if(deviceInfo != null)
+        {
+            compileInfoInputField.GetComponent<InputField>().text = deviceInfo.GetCode(index);
+            compileInfoPorTextArea.text = "当前端口：" + compileInfoShowPortIndex;
         }
     }
     /// <summary>
