@@ -68,7 +68,7 @@ public class DeviceManager
     /// <param name="hashcodeA"></param>
     /// <param name="hashcodeB"></param>
     /// <returns></returns>
-    public static bool ArePortsEnough(int hashcodeA,int hashcodeB)
+    public static bool ArePortsEnough(int hashcodeA, int hashcodeB)
     {
         DeviceInfo infoA = deviceTable[hashcodeA];
         DeviceInfo infoB = deviceTable[hashcodeB];
@@ -86,11 +86,12 @@ public class DeviceManager
     {
         DeviceInfo ainfo = deviceTable[hashcodeA];
         DeviceInfo binfo = deviceTable[hashcodeB];
-        if(ainfo.IsLinkable(linkObject) && binfo.IsLinkable(linkObject))
+        if (ainfo.IsLinkable(linkObject) && binfo.IsLinkable(linkObject))
         {
             LineInfo lineInfo = new LineInfo(ainfo, binfo);
             ainfo.Link(linkObject);
             binfo.Link(linkObject);
+            lineTable.Add(linkObject.GetHashCode(), lineInfo);
             return true;
         }
         else
@@ -106,7 +107,7 @@ public class DeviceManager
         LineInfo lineInfo = lineTable[linkObject.GetHashCode()];
         DeviceInfo ainfo = lineInfo.GetAInfo();
         DeviceInfo binfo = lineInfo.GetBInfo();
-        if(ainfo.UnLink(linkObject) && binfo.UnLink(linkObject))
+        if (ainfo.UnLink(linkObject) && binfo.UnLink(linkObject))
         {
             Debug.Log("删除连线成功");
             return true;
@@ -147,10 +148,11 @@ public class DeviceManager
     /// <param name="posA">A的坐标</param>
     /// <param name="posB">B的坐标</param>
     /// <returns></returns>
-    public static Vector3 GetLinkLineScale(Vector3 posA,Vector3 posB)
+    public static Vector3 GetLinkLineScale(Vector3 posA, Vector3 posB)
     {
         float x = Vector3.Distance(posA, posB) - constantLinkSpan;
-        if (x > 0) {
+        if (x > 0)
+        {
             return new Vector3(x, 0, 0);
         }
         else
