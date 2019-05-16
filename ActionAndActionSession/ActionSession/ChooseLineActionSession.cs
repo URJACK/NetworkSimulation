@@ -34,12 +34,10 @@ public class ChooseLineActionSession : ActionSession, IDeviceColorChange
         StatusCode = StatusSelected;
         ExecAction(ActionDeviceColorSelect);
     }
-
     public GameObject GetColorDevice()
     {
         return lineObject;
     }
-
     public void SetColorDevice(GameObject gameObject)
     {
         lineObject = gameObject;
@@ -53,5 +51,4 @@ public class ChooseLineActionSession : ActionSession, IDeviceColorChange
     public static int ActionDeviceColorSelect = 1;
     public static int ActionDeviceColorUnselect = 2;
     public static int ActionDeleteLine = 3;
-
 }

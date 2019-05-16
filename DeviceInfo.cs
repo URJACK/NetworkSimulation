@@ -16,11 +16,15 @@ public class DeviceInfo
     /// </summary>
     private int layer;
 
-    private int portsLength;
+    private int portLength = 0;
+    /// <summary>
+    /// 当前类型设备的最大端口数量
+    /// </summary>
+    private int maxPortLength;
     /// <summary>
     /// 用来记录相邻连线的GameObject实体
     /// </summary>
-    private List<GameObject> ports = new List<GameObject>();
+    private GameObject[] ports = new GameObject[5];
 
     public string Name { get => name; set => name = value; }
     public int Layer { get => layer; set => layer = value; }
@@ -31,19 +35,19 @@ public class DeviceInfo
         this.layer = layer;
         if (layer == LAYER_PC)
         {
-            portsLength = LENGTH_PC;
+            maxPortLength = LENGTH_PC;
         }
         else if (layer == LAYER_ROUTER)
         {
-            portsLength = LENGTH_ROUTER;
+            maxPortLength = LENGTH_ROUTER;
         }
         else if (layer == LAYER_SWITCH)
         {
-            portsLength = LENGTH_SWITCH;
+            maxPortLength = LENGTH_SWITCH;
         }
         else
         {
-            portsLength = 0;
+            maxPortLength = 0;
         }
     }
     /// <summary>
@@ -52,8 +56,7 @@ public class DeviceInfo
     /// <returns>如果端口数量足够返回true</returns>
     public bool IsPortsEnough()
     {
-        Debug.Log("Name:" + name + "  Count:" + ports.Count);
-        if(ports.Count < portsLength)
+        if(portLength < maxPortLength)
         {
             return true;
         }
@@ -70,14 +73,14 @@ public class DeviceInfo
     /// <returns>是否可以加入该连线到该结点</returns>
     public bool IsLinkable(GameObject line)
     {
-        if (ports.Count < this.portsLength)
+        for(int i = 0; i < LENGTH_MAXPORTS; ++i)
         {
-            return !ports.Contains(line);
+            if(ports[i] == null)
+            {
+                return true;
+            }
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
     /// <summary>
     /// 将当前设备加入连线
@@ -85,7 +88,15 @@ public class DeviceInfo
     /// <param name="line">被加入的连线对象</param>
     public void Link(GameObject line)
     {
-        this.ports.Add(line);
+        for(int i = 0; i < LENGTH_MAXPORTS; ++i)
+        {
+            if(ports[i] == null)
+            {
+                ports[i] = line;
+                ++portLength;
+                return;
+            }
+        }
     }
     /// <summary>
     /// 设备中删除这条连线
@@ -94,7 +105,16 @@ public class DeviceInfo
     /// <returns>删除是否成功</returns>
     public bool UnLink(GameObject line)
     {
-        return ports.Remove(line);
+        for (int i = 0; i < LENGTH_MAXPORTS; ++i)
+        {
+            if (ports[i] == line)
+            {
+                ports[i] = null;
+                --portLength;
+                return true;
+            }
+        }
+        return false;
     }
 
     public string GetLayerString()
@@ -120,11 +140,11 @@ public class DeviceInfo
     {
         int index = 0;
         string str = "";
-        foreach (GameObject obj in ports)
+        for(int i = 0; i < LENGTH_MAXPORTS; ++i)
         {
-            if (obj != null)
+            if(ports[i] != null)
             {
-                str += index++;
+                str += i;
                 str += ";";
             }
         }
@@ -148,4 +168,8 @@ public class DeviceInfo
     public static int LENGTH_SWITCH = 5;
     public static int LENGTH_ROUTER = 3;
     public static int LENGTH_PC = 1;
+    /// <summary>
+    /// 每一个设备都必须配备这么多隐藏的端口，不管最后是否会用上
+    /// </summary>
+    public static int LENGTH_MAXPORTS = LENGTH_SWITCH;
 }

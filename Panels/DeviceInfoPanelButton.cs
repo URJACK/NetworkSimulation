@@ -16,7 +16,7 @@ public class DeviceInfoPanelButton : MonoBehaviour
         }
         else if (index == 3)
         {
-            Debug.Log("打开编译界面");
+            SelectCompile();
         }
         else if (index == 4)
         {
@@ -32,5 +32,10 @@ public class DeviceInfoPanelButton : MonoBehaviour
     {
         PanelStack panelStack = PanelStack.GetInstance();
         panelStack.SaveInfoOfDeviceInfoPanel();
+    }
+    private void SelectCompile()
+    {
+        PanelStack panelStack = PanelStack.GetInstance();
+        panelStack.Push(panelStack.GetCompileInfoPanel());
     }
 }

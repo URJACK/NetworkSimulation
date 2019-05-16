@@ -34,14 +34,33 @@ public class PanelStack : MonoBehaviour
     public Text deviceInfoPortTextArea;
     private DeviceInfo deviceInfo;
 
+    public GameObject CompileInfoPanel;
+    public GameObject CompilePortButton0;
+    public GameObject CompilePortButton1;
+    public GameObject CompilePortButton2;
+    public GameObject CompilePortButton3;
+    public GameObject CompilePortButton4;
+
     /// <summary>
     /// 存储的界面栈内容
     /// </summary>
     private Stack<GameObject> panels = new Stack<GameObject>();
 
+    /// <summary>
+    /// 取得设备信息界面
+    /// </summary>
+    /// <returns></returns>
     public GameObject GetDeviceInfoPanel()
     {
         return deviceInfoPanel;
+    }
+    /// <summary>
+    /// 获取到编译信息界面
+    /// </summary>
+    /// <returns></returns>
+    public GameObject GetCompileInfoPanel()
+    {
+        return CompileInfoPanel;
     }
     /// <summary>
     /// 设备信息界面的内容设置
