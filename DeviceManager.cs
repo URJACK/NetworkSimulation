@@ -38,11 +38,10 @@ public class DeviceManager
     }
     /// <summary>
     /// 删除设备的同时，将设备的信息从设备管理器中删除
-    /// 同时准备查询设备相关的连线信息
     /// </summary>
     /// <param name="hashcode">被删除的设备GameObject的hashcode</param>
     /// <param name="gameObject">被删除的设备gameobject</param>
-    public static bool DeleteDevice(int hashcode, GameObject gameObject)
+    public static bool DeleteDevice(int hashcode)
     {
         //设备表信息的删除
         return deviceTable.Remove(hashcode);

@@ -21,14 +21,12 @@ public class DeviceClick : MonoBehaviour
                 CreateDeviceLinkActionSession cdlas = actionSession as CreateDeviceLinkActionSession;
                 if(cdlas.GetLinkDeviceA() != device)
                 {
-                    Debug.Log("OK");
                     cdlas.SetLinkDeviceB(device);
                     Debug.Log(cdlas.GetStatusCode());
                     cdlas.ChangeStatus(CreateDeviceLinkActionSession.MoveClickDeviceB);
                 }
                 else
                 {
-                    Debug.Log("NO");
                     recorder.ClearSession();
                 }
             }

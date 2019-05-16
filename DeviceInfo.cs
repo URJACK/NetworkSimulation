@@ -124,7 +124,8 @@ public class DeviceInfo
         {
             if (obj != null)
             {
-                str += string.Format("%d:linked; ", index);
+                str += index++;
+                str += ";";
             }
         }
         if (str == "")
