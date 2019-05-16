@@ -37,7 +37,7 @@ public class PanelStack : MonoBehaviour
     public GameObject compileInfoPanel;
     public GameObject compileInfoInputField;
     public Text compileInfoPorTextArea;
-    private int compileInfoShowPortIndex = 0;
+    private int compileInfoShowPortIndex = -1;
 
     /// <summary>
     /// 存储的界面栈内容
@@ -81,12 +81,51 @@ public class PanelStack : MonoBehaviour
     /// <param name="index"></param>
     public void SetInfoOfCompileInfoPanelByDeviceInfo(int index)
     {
-        if(deviceInfo != null)
+        if (deviceInfo != null)
         {
+            deviceInfo.SetCode(compileInfoShowPortIndex, compileInfoInputField.GetComponent<InputField>().text);
             compileInfoInputField.GetComponent<InputField>().text = deviceInfo.GetCode(index);
+            compileInfoShowPortIndex = index;
             compileInfoPorTextArea.text = "当前端口：" + compileInfoShowPortIndex;
         }
     }
+    /// <summary>
+    /// 显示通过编译得到的信息
+    /// </summary>
+    public void SetCompiledInfomationByDeviceInfo()
+    {
+        if(deviceInfo != null)
+        {
+            deviceInfo.SetCode(compileInfoShowPortIndex, compileInfoInputField.GetComponent<InputField>().text);
+            compileInfoInputField.GetComponent<InputField>().text = deviceInfo.GetCompiledInfo();
+            //将当前的下标指针置为无效
+            compileInfoShowPortIndex = -1;
+            compileInfoPorTextArea.text = "当前端口：" + compileInfoShowPortIndex;
+        }
+    }
+    /// <summary>
+    /// 开始尝试编译
+    /// </summary>
+    /// <returns>当前端口的代码是否可以编译</returns>
+    public bool IsCompileAble()
+    {
+        if (deviceInfo.GetCode(compileInfoShowPortIndex) != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    /// <summary>
+    /// 开始对当前的端口代码进行编译
+    /// </summary>
+    public void StartPortCompile()
+    {
+        deviceInfo.StartCompile(compileInfoShowPortIndex);
+    }
+
     /// <summary>
     /// 保存设备的界面的内容信息
     /// </summary>

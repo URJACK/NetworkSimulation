@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 /// <summary>
 /// 设备信息
@@ -31,6 +32,7 @@ public class DeviceInfo
     /// 生成对应的设备代码区
     /// </summary>
     private string[] portCodes = new string[LENGTH_MAXPORTS];
+    private string compiledInfo;
 
     public string Name { get => name; set => name = value; }
     public int Layer { get => layer; set => layer = value; }
@@ -123,13 +125,30 @@ public class DeviceInfo
         return false;
     }
     /// <summary>
+    /// 获取对该接口编译后得到的信息
+    /// </summary>
+    /// <returns></returns>
+    public string GetCompiledInfo()
+    {
+        return compiledInfo;
+    }
+    /// <summary>
+    /// 设置通过设备信息的代码得到的编译结果信息
+    /// </summary>
+    /// <returns></returns>
+    public void SetCompiledInfo(string info)
+    {
+        compiledInfo = info;
+    }
+
+    /// <summary>
     /// 设置代码
     /// </summary>
     /// <param name="code">在这里存储代码</param>
     /// <returns>必须在确保端口的情况下，设置代码才会有效</returns>
     public bool SetCode(int index, string code)
     {
-        if (ports[index] != null)
+        if (index >= 0 && index < maxPortLength && ports[index] != null)
         {
             portCodes[index] = code;
             return true;
@@ -140,19 +159,30 @@ public class DeviceInfo
         }
     }
     /// <summary>
+    /// 开始针对所录入的端口进行答辩
+    /// 这里不需要对index进行检测，因为我们在调用这个方法的时候，我们已经完成了对代码的检测
+    /// 最终会把编译的信息存入该设备的compileInfo变量中
+    /// </summary>
+    /// <param name="index">被检测的端口</param>
+    public void StartCompile(int index)
+    {
+        Compiler.GetInstance().Compile(portCodes[index], this);
+    }
+
+    /// <summary>
     /// 取得代码
     /// </summary>
     /// <param name="index"></param>
     /// <returns>如果index对应端口未连接，返回null</returns>
     public string GetCode(int index)
     {
-        if (ports[index] != null)
+        if (index >= 0 && index < maxPortLength && ports[index] != null)
         {
             return portCodes[index];
         }
         else
         {
-            return "";
+            return null;
         }
     }
     /// <summary>
