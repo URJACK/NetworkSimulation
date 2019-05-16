@@ -12,5 +12,7 @@ public class DeviceInfomationBackAction : Action
     public override void Exec()
     {
         Debug.Log(".....收框 WOW!");
+        PanelStack panelStack = PanelStack.GetInstance();
+        panelStack.Pop(panelStack.GetDeviceInfoPanel());
     }
 }

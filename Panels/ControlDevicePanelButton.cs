@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ControlDeviceButton : MonoBehaviour
+public class ControlDevicePanelButton : MonoBehaviour
 {
     public Image image;
     public void Select(int index)

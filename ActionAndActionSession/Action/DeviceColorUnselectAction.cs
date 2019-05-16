@@ -10,7 +10,6 @@ public class DeviceColorUnselectAction : Action
     }
     public override void Exec()
     {
-        Debug.Log("哈哈");
         foreach (Transform child in actionsession.GetColorDevice().transform)
         {
             child.gameObject.GetComponent<MeshRenderer>().material = MaterialRecorder.materials[MaterialRecorder.DEVICENORMAL];

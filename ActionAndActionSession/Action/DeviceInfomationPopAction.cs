@@ -3,14 +3,17 @@ using System.Collections;
 
 public class DeviceInfomationPopAction : Action
 {
-    public DeviceInfomationPopAction(ChooseDeviceActionSession chooseDeviceActionSession)
+    public DeviceInfomationPopAction(IDeviceColorChange session)
     {
-        this.chooseDeviceActionSession = chooseDeviceActionSession;
+        this.actionsession = session;
     }
-    private ChooseDeviceActionSession chooseDeviceActionSession;
+    private IDeviceColorChange actionsession;
 
     public override void Exec()
     {
         Debug.Log(".....弹框 Boom!");
+        PanelStack panelStack = PanelStack.GetInstance();
+        panelStack.SetInfoOfDeviceInfoPanel(DeviceManager.GetDeviceInfo(actionsession.GetColorDevice().GetHashCode()));
+        panelStack.Push(panelStack.GetDeviceInfoPanel());
     }
 }

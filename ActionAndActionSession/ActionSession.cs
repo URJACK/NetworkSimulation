@@ -105,9 +105,6 @@ public abstract class ActionSession
         {
             directions.Add(movementCode, new Dictionary<int, int>());
         }
-        Debug.Log("move:" + movementCode);
-        Debug.Log("src:" + srcStatusCode);
-        Debug.Log("des:" + desStatusCode);
         directions[movementCode].Add(srcStatusCode, desStatusCode);
     }
     /// <summary>

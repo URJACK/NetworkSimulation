@@ -44,7 +44,18 @@ public class CameraClickScript : MonoBehaviour
                         DeviceManager.GroundClickPoint = hitPoint;
                         //hitInfo.transform.gameObject.SendMessage("OnMouseDown");
                         GameObject newObject = Instantiate(prefab, DeviceManager.GroundClickPoint, Quaternion.Euler(0, 0, 0)) as GameObject;
-                        DeviceManager.CreateDevice(newObject.GetHashCode(), new DeviceInfo());
+                        if (index == ControlDevicePanelManager.PC)
+                        {
+                            DeviceManager.CreateDevice(newObject.GetHashCode(), new DeviceInfo("DefaultPC", DeviceInfo.LAYER_PC));
+                        }
+                        else if(index == ControlDevicePanelManager.ROUTER)
+                        {
+                            DeviceManager.CreateDevice(newObject.GetHashCode(), new DeviceInfo("DefaultRouter", DeviceInfo.LAYER_ROUTER));
+                        }
+                        else if (index == ControlDevicePanelManager.SWITCH)
+                        {
+                            DeviceManager.CreateDevice(newObject.GetHashCode(), new DeviceInfo("DefaultSwitch", DeviceInfo.LAYER_SWITCH));
+                        }
                         ControlDevicePanelManager.Select(0, null);
                     }
                     /*

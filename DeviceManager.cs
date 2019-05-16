@@ -50,6 +50,7 @@ public class DeviceManager
     public static void CreateDevice(int hashcode, DeviceInfo deviceInfo)
     {
         deviceTable.Add(hashcode, deviceInfo);
+        Debug.Log(deviceInfo);
     }
     /// <summary>
     /// 删除设备的同时，将设备的信息从设备管理器中删除
