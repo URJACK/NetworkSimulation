@@ -164,9 +164,16 @@ public class DeviceInfo
     /// 最终会把编译的信息存入该设备的compileInfo变量中
     /// </summary>
     /// <param name="index">被检测的端口</param>
-    public void StartCompile(int index)
+    public bool StartCompile(int index)
     {
-        Compiler.GetInstance().Compile(portCodes[index], this);
+        if (index >= 0 && index < maxPortLength && ports[index] != null)
+        {
+            return Compiler.GetInstance().Compile(portCodes[index], this);
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /// <summary>

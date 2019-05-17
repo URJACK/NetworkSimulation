@@ -5,8 +5,14 @@ using UnityEngine;
 public class KeyboardAndMouseControl : MonoBehaviour
 {
     private bool ready = true;
+
     private static string CHOOSEDEVICE_SESSION = "ChooseDeviceActionSession";
     private static string CHOOSELINE_SESSION = "ChooseLineActionSession";
+    void Start()
+    {
+        Compiler.GetInstance();        
+    }
+
     void OnGUI()
     {
         if (Input.GetKey(KeyCode.Delete) && ready)
@@ -32,7 +38,10 @@ public class KeyboardAndMouseControl : MonoBehaviour
         {
             ready = false;
             ActionSession session = ActionSessionRecorder.GetInstance().GetSession();
-            if(session == null)
+            if(PanelStack.GetInstance().GetStackSize() > 0) {
+                PanelStack.GetInstance().Pop(null);
+            }
+            else if(session == null)
             {
                 return;
             }

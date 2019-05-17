@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 
 public class DeviceInfoPanelButton : MonoBehaviour
 {
@@ -20,9 +21,16 @@ public class DeviceInfoPanelButton : MonoBehaviour
         }
         else if (index == 4)
         {
-            Debug.Log("打开调试界面");
+            SelectOperation();
         }
     }
+
+    private void SelectOperation()
+    {
+        PanelStack panelStack = PanelStack.GetInstance();
+        panelStack.Push(panelStack.GetOperationInfoPanel());
+    }
+
     private void SelectQuit()
     {
         PanelStack panelStack = PanelStack.GetInstance();

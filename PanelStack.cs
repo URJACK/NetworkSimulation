@@ -39,6 +39,9 @@ public class PanelStack : MonoBehaviour
     public Text compileInfoPorTextArea;
     private int compileInfoShowPortIndex = -1;
 
+
+    public GameObject operationInfoPanel;
+
     /// <summary>
     /// 存储的界面栈内容
     /// </summary>
@@ -59,6 +62,14 @@ public class PanelStack : MonoBehaviour
     public GameObject GetCompileInfoPanel()
     {
         return compileInfoPanel;
+    }
+    /// <summary>
+    /// 取得操作界面
+    /// </summary>
+    /// <returns></returns>
+    public GameObject GetOperationInfoPanel()
+    {
+        return operationInfoPanel;
     }
     /// <summary>
     /// 设备信息界面的内容设置
@@ -125,7 +136,6 @@ public class PanelStack : MonoBehaviour
     {
         deviceInfo.StartCompile(compileInfoShowPortIndex);
     }
-
     /// <summary>
     /// 保存设备的界面的内容信息
     /// </summary>
@@ -162,6 +172,14 @@ public class PanelStack : MonoBehaviour
                 go.SetActive(false);
             }
         }
+    }
+    /// <summary>
+    /// 取得界面栈大小
+    /// </summary>
+    /// <returns>界面栈大小数值</returns>
+    public int GetStackSize()
+    {
+        return panels.Count;
     }
 
     public static string GameNameDeviceInfoPanel = "DeviceInfoPanel";
