@@ -22,6 +22,16 @@ public class OperationInfoPanelButton : MonoBehaviour
         {
             SelectQuit();
         }
+        else if (index == SELECT_STOPLISTEN)
+        {
+            SelectStopListen();
+        }
+    }
+
+    private void SelectStopListen()
+    {
+        PanelStack.GetInstance().StopListen();
+        PanelStack.GetInstance().SetOperationInfoByDeviceInfo();
     }
 
     private void SelectQuit()
@@ -31,15 +41,17 @@ public class OperationInfoPanelButton : MonoBehaviour
 
     private void SelectSend()
     {
-        Debug.Log("send");
+        PanelStack.GetInstance().SendDebugListenMessage();
     }
 
     private void SelectListen()
     {
-        Debug.Log("listen");
+        PanelStack.GetInstance().StartListen();
+        PanelStack.GetInstance().SetOperationInfoByDeviceInfo();
     }
 
     public static int SELECT_LISTEN = 1;
     public static int SELECT_SEND = 2;
     public static int SELECT_QUIT = 3;
+    public static int SELECT_STOPLISTEN = 4;
 }

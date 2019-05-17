@@ -28,6 +28,7 @@ public class DeviceInfoPanelButton : MonoBehaviour
     private void SelectOperation()
     {
         PanelStack panelStack = PanelStack.GetInstance();
+        panelStack.SetOperationInfoByDeviceInfo();
         panelStack.Push(panelStack.GetOperationInfoPanel());
     }
 

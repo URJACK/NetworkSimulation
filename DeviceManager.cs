@@ -100,6 +100,21 @@ public class DeviceManager
         }
     }
     /// <summary>
+    /// 取得连线的信息
+    /// </summary>
+    /// <returns></returns>
+    public static LineInfo GetLineInfo(int hashCode)
+    {
+        if (lineTable.ContainsKey(hashCode))
+        {
+            return lineTable[hashCode];
+        }
+        else
+        {
+            return null;
+        }
+    }
+    /// <summary>
     /// 外部传入这个连线对象
     /// </summary>
     public static bool DeleteLink(GameObject linkObject)

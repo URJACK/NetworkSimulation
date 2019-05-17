@@ -41,6 +41,22 @@ public class PanelStack : MonoBehaviour
 
 
     public GameObject operationInfoPanel;
+    /// <summary>
+    /// 监听信息的显示区域
+    /// </summary>
+    public Text listenInfoTextArea;
+    /// <summary>
+    /// 接受监听信息的窗口
+    /// </summary>
+    public GameObject listenInfoTextField;
+    /// <summary>
+    /// 发送调试信息的窗口
+    /// </summary>
+    public GameObject sendInfoTextField;
+    public GameObject srcAddressField;
+    public GameObject desAddressField;
+    public GameObject srcPortField;
+    public GameObject desPortField;
 
     /// <summary>
     /// 存储的界面栈内容
@@ -70,6 +86,14 @@ public class PanelStack : MonoBehaviour
     public GameObject GetOperationInfoPanel()
     {
         return operationInfoPanel;
+    }
+    /// <summary>
+    /// 取得存储的设备信息
+    /// </summary>
+    /// <returns></returns>
+    public DeviceInfo GetDeviceInfo()
+    {
+        return deviceInfo;
     }
     /// <summary>
     /// 设备信息界面的内容设置
@@ -115,6 +139,17 @@ public class PanelStack : MonoBehaviour
         }
     }
     /// <summary>
+    /// 显示操作界面的数据信息
+    /// </summary>
+    public void SetOperationInfoByDeviceInfo()
+    {
+        listenInfoTextArea.text = deviceInfo.GetListenStatusString();
+        sendInfoTextField.GetComponent<InputField>().text = "";
+        srcAddressField.GetComponent<InputField>().text = deviceInfo.GetListenAddress();
+        srcPortField.GetComponent<InputField>().text = "" + deviceInfo.GetListenPort();
+        listenInfoTextField.GetComponent<InputField>().text = deviceInfo.GetListenMessage();
+    }
+    /// <summary>
     /// 开始尝试编译
     /// </summary>
     /// <returns>当前端口的代码是否可以编译</returns>
@@ -144,6 +179,51 @@ public class PanelStack : MonoBehaviour
         if (deviceInfo != null)
         {
             deviceInfo.Name = deviceInfoNameTextField.GetComponent<InputField>().text;
+        }
+    }
+    /// <summary>
+    /// 停止监听状态
+    /// </summary>
+    public void StopListen()
+    {
+        if(deviceInfo != null)
+        {
+            deviceInfo.SetListenStatus(false);
+        }
+    }
+    /// <summary>
+    /// 开始监听状态
+    /// </summary>
+    public void StartListen()
+    {
+        try
+        {
+            if (deviceInfo != null)
+            {
+                deviceInfo.SetListenStatus(true);
+                deviceInfo.SetListenAddress(srcAddressField.GetComponent<InputField>().text);
+                deviceInfo.SetListenPort(int.Parse(srcPortField.GetComponent<InputField>().text));
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log(e);
+        }
+    }
+    /// <summary>
+    /// 发送调试信息
+    /// </summary>
+    public void SendDebugListenMessage()
+    {
+        try
+        {
+            deviceInfo.SetListenAddress(srcAddressField.GetComponent<InputField>().text);
+            deviceInfo.SetListenPort(int.Parse(srcPortField.GetComponent<InputField>().text));
+            deviceInfo.DebugSendListenMessage(desAddressField.GetComponent<InputField>().text, int.Parse(desPortField.GetComponent<InputField>().text), sendInfoTextField.GetComponent<InputField>().text);
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log(e);
         }
     }
     /// <summary>

@@ -32,7 +32,26 @@ public class DeviceInfo
     /// 生成对应的设备代码区
     /// </summary>
     private string[] portCodes = new string[LENGTH_MAXPORTS];
+    /// <summary>
+    /// 编译之后的信息
+    /// </summary>
     private string compiledInfo;
+    /// <summary>
+    /// 是否监听
+    /// </summary>
+    private bool listenStatus = false;
+    /// <summary>
+    /// 监听的端口
+    /// </summary>
+    private int listenPort = 3000;
+    /// <summary>
+    /// 监听的地址
+    /// </summary>
+    private string listenaddress = "127.0.0.1";
+    /// <summary>
+    /// 当前记录的监听信息
+    /// </summary>
+    private string listenMessage = "";
 
     public string Name { get => name; set => name = value; }
     public int Layer { get => layer; set => layer = value; }
@@ -64,7 +83,7 @@ public class DeviceInfo
     /// <returns>如果端口数量足够返回true</returns>
     public bool IsPortsEnough()
     {
-        if(portLength < maxPortLength)
+        if (portLength < maxPortLength)
         {
             return true;
         }
@@ -81,9 +100,9 @@ public class DeviceInfo
     /// <returns>是否可以加入该连线到该结点</returns>
     public bool IsLinkable(GameObject line)
     {
-        for(int i = 0; i < maxPortLength; ++i)
+        for (int i = 0; i < maxPortLength; ++i)
         {
-            if(ports[i] == null)
+            if (ports[i] == null)
             {
                 return true;
             }
@@ -96,9 +115,9 @@ public class DeviceInfo
     /// <param name="line">被加入的连线对象</param>
     public void Link(GameObject line)
     {
-        for(int i = 0; i < LENGTH_MAXPORTS; ++i)
+        for (int i = 0; i < LENGTH_MAXPORTS; ++i)
         {
-            if(ports[i] == null)
+            if (ports[i] == null)
             {
                 ports[i] = line;
                 ++portLength;
@@ -125,6 +144,125 @@ public class DeviceInfo
         return false;
     }
     /// <summary>
+    /// 设置监听的端口
+    /// </summary>
+    /// <param name="port">新的监听端口</param>
+    public void SetListenPort(int port)
+    {
+        listenPort = port;
+    }
+    /// <summary>
+    /// 设置监听的地址
+    /// </summary>
+    /// <param name="address"></param>
+    public void SetListenAddress(string address)
+    {
+        listenaddress = address;
+    }
+    /// <summary>
+    /// 取得监听的端口
+    /// </summary>
+    /// <returns>当前正在监听的端口值</returns>
+    public int GetListenPort()
+    {
+        return listenPort;
+    }
+    /// <summary>
+    /// 取得监听的地址
+    /// </summary>
+    /// <returns>正在监听的地址</returns>
+    public string GetListenAddress()
+    {
+        return listenaddress;
+    }
+    /// <summary>
+    /// 设置监听的状态
+    /// </summary>
+    /// <param name="status">true为开启监听</param>
+    public void SetListenStatus(bool status)
+    {
+        listenStatus = status;
+    }
+    /// <summary>
+    /// 增加被监听的信息
+    /// </summary>
+    public void AddListenMessage(string msg)
+    {
+        listenMessage += msg;
+    }
+    /// <summary>
+    /// 取得当前监听得到的信息
+    /// </summary>
+    /// <returns>监听已经得到的信息</returns>
+    public string GetListenMessage()
+    {
+        return listenMessage;
+    }
+    /// <summary>
+    /// 情况已经存储的监听信息
+    /// </summary>
+    public void ClearListenMessage()
+    {
+        listenMessage = "";
+    }
+    /// <summary>
+    /// 仿真发送信息，测试图的联通情况
+    /// </summary>
+    /// <param name="desAddress">目标设备的监听的IP地址</param>
+    /// <param name="desPort">目标设备监听的端口地址</param>
+    /// <param name="message">本次发送的测试文本信息</param>
+    public void DebugSendListenMessage(string desAddress, int desPort, string message)
+    {
+        Debug.Log("nihao");
+        Debug.Log(desAddress);
+        Debug.Log(desPort);
+        Debug.Log(message);
+        HashSet<DeviceInfo> visited = new HashSet<DeviceInfo>();
+        visited.Add(this);
+        Queue<DeviceInfo> queue = new Queue<DeviceInfo>();
+        queue.Enqueue(this);
+        while(queue.Count > 0)
+        {
+            DeviceInfo deviceInfo = queue.Dequeue();
+            //如果该设备是匹配的
+            if(deviceInfo.listenStatus == true && deviceInfo.GetListenAddress() == desAddress && deviceInfo.GetListenPort() == desPort)
+            {
+                deviceInfo.AddListenMessage(message);
+                if(deviceInfo == PanelStack.GetInstance().GetDeviceInfo())
+                {
+                    //如果正在查看的设备是自己，那么就会收到这个信息
+                    PanelStack.GetInstance().SetOperationInfoByDeviceInfo();
+                }
+                return;
+            }
+            for(int i = 0; i < maxPortLength; ++i)
+            {
+                GameObject lineObject = ports[i];
+                if(lineObject != null)
+                {
+                    //存在连线的情况，我们尝试获取连线的hash值并获取连线信息
+                    LineInfo lineInfo = DeviceManager.GetLineInfo(lineObject.GetHashCode());
+                    if(lineInfo != null)
+                    {
+                        if (!visited.Contains(lineInfo.GetAInfo()))
+                        {
+                            //如果不包含A设备
+                            visited.Add(lineInfo.GetAInfo());
+                            queue.Enqueue(lineInfo.GetAInfo());
+                        }
+                        if (!visited.Contains(lineInfo.GetBInfo()))
+                        {
+                            //如果不包含B设备
+                            visited.Add(lineInfo.GetBInfo());
+                            queue.Enqueue(lineInfo.GetBInfo());
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+    /// <summary>
     /// 获取对该接口编译后得到的信息
     /// </summary>
     /// <returns></returns>
@@ -140,7 +278,6 @@ public class DeviceInfo
     {
         compiledInfo = info;
     }
-
     /// <summary>
     /// 设置代码
     /// </summary>
@@ -175,7 +312,6 @@ public class DeviceInfo
             return false;
         }
     }
-
     /// <summary>
     /// 取得代码
     /// </summary>
@@ -237,6 +373,21 @@ public class DeviceInfo
         else
         {
             return str;
+        }
+    }
+    /// <summary>
+    /// 取得监听状态字符串
+    /// </summary>
+    /// <returns>代表监听状态的字符串</returns>
+    public string GetListenStatusString()
+    {
+        if(listenStatus == false)
+        {
+            return "尚未开启监听";
+        }
+        else
+        {
+            return "本机地址:" + listenaddress + " 本机端口:" + listenPort;
         }
     }
     public override string ToString()
