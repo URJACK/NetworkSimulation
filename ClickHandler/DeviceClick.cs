@@ -18,6 +18,7 @@ public class DeviceClick : MonoBehaviour
         {
             ActionSession actionSession = recorder.GetSession();
             if (actionSession != null && actionSession.GetType().ToString() == "CreateDeviceLinkActionSession") {
+                MyLogger.GetInstance().Log("准备连接");
                 CreateDeviceLinkActionSession cdlas = actionSession as CreateDeviceLinkActionSession;
                 if(cdlas.GetLinkDeviceA() != device)
                 {

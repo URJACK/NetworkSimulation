@@ -14,11 +14,11 @@ public class DeviceDeleteAction : Action
         if (DeviceManager.DeleteDevice(actionsession.GetColorDevice().GetHashCode()))
         {
             GameObject.Destroy(actionsession.GetColorDevice());
-            Debug.Log("删除成功");
+            MyLogger.GetInstance().Log("设备删除成功");
         }
         else
         {
-            Debug.Log("删除失败");
+            MyLogger.GetInstance().Log("设备删除失败");
         }
     }
 }

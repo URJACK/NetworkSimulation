@@ -14,6 +14,11 @@ public class DeleteLineAction : Action
         if (DeviceManager.DeleteLink(lineObject))
         {
             GameObject.Destroy(lineObject);
+            MyLogger.GetInstance().Log("成功删除连线");
+        }
+        else
+        {
+            MyLogger.GetInstance().Log("删除连线失败");
         }
     }
 }

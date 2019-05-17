@@ -41,6 +41,7 @@ public class DeviceInfoPanelButton : MonoBehaviour
     {
         PanelStack panelStack = PanelStack.GetInstance();
         panelStack.SaveInfoOfDeviceInfoPanel();
+        MyLogger.GetInstance().Log("保存设备信息完成");
     }
     private void SelectCompile()
     {

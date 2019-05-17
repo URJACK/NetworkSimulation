@@ -62,7 +62,6 @@ public class PanelStack : MonoBehaviour
     /// 存储的界面栈内容
     /// </summary>
     private Stack<GameObject> panels = new Stack<GameObject>();
-
     /// <summary>
     /// 取得设备信息界面
     /// </summary>

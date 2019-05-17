@@ -11,13 +11,13 @@ public class DeviceLinkCreateAction : Action
     }
     public override void Exec()
     {
-        Debug.Log("连线");
         GameObject prefab = (GameObject)Resources.Load("Prefabs/LinkUnit");
         GameObject gameObjectA, gameObjectB;
         gameObjectA = actionsession.GetLinkDeviceA();
         gameObjectB = actionsession.GetLinkDeviceB();
         if (DeviceManager.ArePortsEnough(gameObjectA.GetHashCode(), gameObjectB.GetHashCode()))
         {
+            MyLogger.GetInstance().Log("成功创建连线");
             Vector3 pos = DeviceManager.GetLinkLinePos(gameObjectA.transform.position, gameObjectB.transform.position);
             Vector3 angle = DeviceManager.GetLinkLineRotateAngle(gameObjectA.transform.position, gameObjectB.transform.position);
             Vector3 scale = DeviceManager.GetLinkLineScale(gameObjectA.transform.position, gameObjectB.transform.position);
@@ -28,7 +28,7 @@ public class DeviceLinkCreateAction : Action
         }
         else
         {
-            Debug.Log("端口数量不足");
+            MyLogger.GetInstance().Log("设备端口数量不足");
             ControlDevicePanelManager.Select(0, null);
         }
     }

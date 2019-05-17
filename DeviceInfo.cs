@@ -76,6 +76,7 @@ public class DeviceInfo
         {
             maxPortLength = 0;
         }
+        Debug.Log("Name:" + name + "  MaxPortLength:" + maxPortLength);
     }
     /// <summary>
     /// 检查自己端口数量是否足够
@@ -224,9 +225,11 @@ public class DeviceInfo
         while(queue.Count > 0)
         {
             DeviceInfo deviceInfo = queue.Dequeue();
+            Debug.Log("Deviceinfo" + deviceInfo.Name);
             //如果该设备是匹配的
             if(deviceInfo.listenStatus == true && deviceInfo.GetListenAddress() == desAddress && deviceInfo.GetListenPort() == desPort)
             {
+                Debug.Log("wowo");
                 deviceInfo.AddListenMessage(message);
                 if(deviceInfo == PanelStack.GetInstance().GetDeviceInfo())
                 {
@@ -235,11 +238,13 @@ public class DeviceInfo
                 }
                 return;
             }
-            for(int i = 0; i < maxPortLength; ++i)
+            Debug.Log("MaxLength:" + LENGTH_MAXPORTS);
+            for(int i = 0; i < LENGTH_MAXPORTS; ++i)
             {
-                GameObject lineObject = ports[i];
+                GameObject lineObject = deviceInfo.ports[i];
                 if(lineObject != null)
                 {
+                    Debug.Log("Src DeviceName" + deviceInfo.Name);
                     //存在连线的情况，我们尝试获取连线的hash值并获取连线信息
                     LineInfo lineInfo = DeviceManager.GetLineInfo(lineObject.GetHashCode());
                     if(lineInfo != null)
@@ -248,19 +253,29 @@ public class DeviceInfo
                         {
                             //如果不包含A设备
                             visited.Add(lineInfo.GetAInfo());
+                            Debug.Log("EnqueA");
                             queue.Enqueue(lineInfo.GetAInfo());
                         }
                         if (!visited.Contains(lineInfo.GetBInfo()))
                         {
                             //如果不包含B设备
                             visited.Add(lineInfo.GetBInfo());
+                            Debug.Log("EnqueB");
                             queue.Enqueue(lineInfo.GetBInfo());
                         }
                     }
+                    else
+                    {
+                        Debug.Log("EMPTY");
+                    }
+                }
+                else
+                {
+                    Debug.Log("EMPTY Line");
                 }
             }
         }
-        
+        MyLogger.GetInstance().Log("已经发送信息");
     }
     /// <summary>
     /// 获取对该接口编译后得到的信息

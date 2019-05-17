@@ -117,6 +117,7 @@ public class Compiler
                     //开始词法分析
                     this.lexicalAnalyzer.Analysis(this.compileWords, str);
                     deviceInfo.SetCompiledInfo("Lexical Analyze Has Completed");
+                    MyLogger.GetInstance().Log("Compiler Finished");
                     availableFlag = true;
                     return true;
                 }
@@ -124,6 +125,7 @@ public class Compiler
                 {
                     //抓出异常并打印
                     deviceInfo.SetCompiledInfo(e.Message);
+                    MyLogger.GetInstance().Log("Compiler Finished");
                     availableFlag = true;
                     return false;
                 }
@@ -131,12 +133,14 @@ public class Compiler
             else
             {
                 deviceInfo.SetCompiledInfo("编译单词序列出现空指针的错误");
+                MyLogger.GetInstance().Log("Compiler Finished");
                 return false;
             }
         }
         else
         {
             deviceInfo.SetCompiledInfo("编译器正在进行处理，请勿重复调用");
+            MyLogger.GetInstance().Log("Compiler Finished");
             return false;
         }
     }
